@@ -1,7 +1,8 @@
 Python client for Iris API
 ==========================
 
-## Usage
+Usage
+-----
 
 .. code-block:: python
 
