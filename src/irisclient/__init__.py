@@ -10,7 +10,7 @@ import requests
 from .exceptions import InvalidArgument
 
 
-__version__ = "0.0.1"
+__version__ = "1.0.0"
 
 
 class IrisAuth(requests.auth.AuthBase):
