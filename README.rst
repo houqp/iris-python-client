@@ -17,3 +17,12 @@ Usage
     print client.incident('plan-foo', context={'key-foo': 'abc', 'key-bar': 1})
     # send an adhoc notification
     print client.notification(role='user', target='alice', priority='urgent', subject='Yo')
+
+
+Test
+----
+
+.. code-block:: bash
+
+    pip install tox
+    tox

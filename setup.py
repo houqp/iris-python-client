@@ -24,7 +24,6 @@ setuptools.setup(
     author='Minhaz Mahmud',
     url='https://github.com/houqp/iris-python-client',
     packages=setuptools.find_packages('src'),
-    package_data={'': ['LICENSE']},
     package_dir={'': 'src'},
     include_package_data=True,
     install_requires=['requests'],

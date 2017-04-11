@@ -7,6 +7,9 @@ import time
 
 import requests
 
+from .exceptions import InvalidArgument
+
+
 __version__ = "0.0.1"
 
 
@@ -43,7 +46,7 @@ class IrisClient(requests.Session):
         except:
             raise ValueError('Failed to decode json: %s' % r.text)
 
-    def notification(self, role, target, priority, subject, body=None, mode=None, template=None, context=None):
+    def notification(self, role, target, subject, priority=None, mode=None, body=None, template=None, context=None):
         data = {
             'role': role,
             'target': target,
@@ -52,6 +55,8 @@ class IrisClient(requests.Session):
         if mode:
             data['mode'] = mode
         else:
+            if not priority:
+                raise InvalidArgument('Missing both priority and mode arguments, need to at least specify one.')
             data['priority'] = priority
         if template and context:
             data['template'] = template
