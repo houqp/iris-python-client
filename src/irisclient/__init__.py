@@ -35,7 +35,6 @@ class IrisClient(requests.Session):
         super(IrisClient, self).__init__()
         self.auth = IrisAuth(app, key)
         self.url = api_host + '/v%d/' % version
-        self.verify = False
 
     def incident(self, plan, context):
         r = self.post(self.url + 'incidents',
