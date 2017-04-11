@@ -1,3 +1,6 @@
+.. image:: https://travis-ci.org/houqp/iris-python-client.svg?branch=master
+    :target: https://travis-ci.org/houqp/iris-python-client
+
 Python client for Iris API
 ==========================
 
