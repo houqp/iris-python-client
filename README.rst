@@ -1,3 +1,6 @@
+.. image:: https://badge.fury.io/py/irisclient.svg
+    :target: https://badge.fury.io/py/irisclient
+
 .. image:: https://travis-ci.org/houqp/iris-python-client.svg?branch=master
     :target: https://travis-ci.org/houqp/iris-python-client
 
