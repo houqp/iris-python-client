@@ -45,7 +45,7 @@ class IrisClient(requests.Session):
         except:
             raise ValueError('Failed to decode json: %s' % r.text)
 
-    def notification(self, role, target, priority, subject, body=None, mode=None, template=None, context=None, email_html=None):
+    def notification(self, role, target, subject, priority=None, mode=None, body=None, template=None, context=None, email_html=None):
         data = {
             'role': role,
             'target': target,
