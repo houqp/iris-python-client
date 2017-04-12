@@ -45,7 +45,7 @@ class IrisClient(requests.Session):
         except:
             raise ValueError('Failed to decode json: %s' % r.text)
 
-    def notification(self, role, target, subject, priority=None, mode=None, body=None, template=None, context=None):
+    def notification(self, role, target, priority, subject, body=None, mode=None, template=None, context=None, email_html=None):
         data = {
             'role': role,
             'target': target,
@@ -57,13 +57,16 @@ class IrisClient(requests.Session):
             if not priority:
                 raise InvalidArgument('Missing both priority and mode arguments, need to at least specify one.')
             data['priority'] = priority
-        if template and context:
-            data['template'] = template
-            data['context'] = context
-            data['context']['iris'] = {}
-            data['body'] = None
-        elif body:
-            data['body'] = body
+        if email_html:
+            data['email_html'] = email_html
+        else:
+            if template and context:
+                data['template'] = template
+                data['context'] = context
+                data['context']['iris'] = {}
+                data['body'] = None
+            elif body:
+                data['body'] = body
         r = self.post(self.url + 'notifications', json=data)
         if r.status_code == 200:
             return True
