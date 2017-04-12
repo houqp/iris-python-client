@@ -6,6 +6,12 @@ Release History
 **Unreleased**
 
 
+1.1.0 (2017-04-12)
++++++++++++++++++++
+
+- add email_html argument to notification method
+
+
 1.0.0 (2017-04-11)
 +++++++++++++++++++
 
