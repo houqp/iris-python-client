@@ -5,3 +5,5 @@
 venv
 .tox
 .cache
+build
+dist
