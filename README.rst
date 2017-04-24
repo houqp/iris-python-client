@@ -7,6 +7,14 @@
 Python client for Iris API
 ==========================
 
+Install
+------
+
+.. code-block:: bash
+
+  pip install irisclient
+
+
 Usage
 -----
 
