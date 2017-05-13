@@ -40,3 +40,12 @@ Test
 
     pip install tox
     tox
+
+
+Release
+-------
+
+.. code-block:: bash
+
+   python setup.py sdist
+   twine upload dist/*

@@ -1,5 +1,7 @@
 from __future__ import absolute_import
 
+from .compat import str, bytes
+
 import base64
 import hashlib
 import hmac
@@ -10,21 +12,26 @@ import requests
 from .exceptions import InvalidArgument
 
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 
 class IrisAuth(requests.auth.AuthBase):
     def __init__(self, app, key):
-        self.header = 'hmac %s:' % app
-        self.HMAC = hmac.new(key, '', hashlib.sha512)
+        if not isinstance(app, bytes):
+            app = app.encode('utf-8')
+        self.header = b'hmac ' + app + b':'
+        if not isinstance(key, bytes):
+            key = key.encode('utf-8')
+        self.HMAC = hmac.new(key, b'', hashlib.sha512)
 
     def __call__(self, request):
         HMAC = self.HMAC.copy()
-        path = request.path_url
-        method = request.method
-        body = request.body or ''
-        window = int(time.time()) // 5
-        HMAC.update('%s %s %s %s' % (window, method, path, body))
+        path = str(request.path_url)
+        method = str(request.method)
+        body = str(request.body or '')
+        window = str(int(time.time()) // 5)
+        content = '%s %s %s %s' % (window, method, path, body)
+        HMAC.update(content.encode('utf-8'))
         digest = base64.urlsafe_b64encode(HMAC.digest())
         request.headers['Authorization'] = self.header + digest
         return request
@@ -45,7 +52,9 @@ class IrisClient(requests.Session):
         except:
             raise ValueError('Failed to decode json: %s' % r.text)
 
-    def notification(self, role, target, subject, priority=None, mode=None, body=None, template=None, context=None, email_html=None):
+    def notification(self, role, target, subject,
+                     priority=None, mode=None, body=None, template=None,
+                     context=None, email_html=None):
         data = {
             'role': role,
             'target': target,
@@ -55,7 +64,9 @@ class IrisClient(requests.Session):
             data['mode'] = mode
         else:
             if not priority:
-                raise InvalidArgument('Missing both priority and mode arguments, need to at least specify one.')
+                raise InvalidArgument(
+                    ('Missing both priority and mode arguments, '
+                     'need to at least specify one.'))
             data['priority'] = priority
         if email_html:
             data['email_html'] = email_html
@@ -71,4 +82,6 @@ class IrisClient(requests.Session):
         if r.status_code == 200:
             return True
         else:
-            raise ValueError('Error response from server, %s: %s' % (r.status_code, r.content))
+            raise ValueError(
+                'Error response from server, %s: %s' % (
+                    r.status_code, r.content))

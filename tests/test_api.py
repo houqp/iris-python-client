@@ -42,3 +42,29 @@ def test_invalid_argument(iris_client):
     with pytest.raises(InvalidArgument):
         with HTTMock(mock_response):
             iris_client.notification(role='user', target='foo', subject='test')
+
+
+def test_encoding_in_hmac(mocker):
+    mocker.patch('irisclient.time').time.return_value = 1000
+
+    IrisClient(
+        app='SERVICE_FOO',
+        key='IRIS_API_KEY',
+        api_host='http://iris.foo.bar'
+    )
+
+    client = IrisClient(
+        app=b'SERVICE_FOO',
+        key=b'IRIS_API_KEY',
+        api_host='http://iris.foo.bar'
+    )
+
+    @all_requests
+    def check_auth_header(url, request):
+        header_bytes = bytes(request.headers['Authorization'])
+        assert header_bytes.startswith('hmac SERVICE_FOO:'.encode('utf-8'))
+        return {'status_code': 200}
+
+    with HTTMock(check_auth_header):
+        client.notification(
+            role='user', target='foo', priority='high', subject='test')
