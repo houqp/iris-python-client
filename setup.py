@@ -20,7 +20,7 @@ setuptools.setup(
     name='irisclient',
     version=version,
     description='Python client for Iris API',
-    log_description=readme,
+    long_description=readme,
     author='Minhaz Mahmud',
     url='https://github.com/houqp/iris-python-client',
     packages=setuptools.find_packages('src'),
