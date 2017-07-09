@@ -12,7 +12,7 @@ import requests
 from .exceptions import InvalidArgument
 
 
-__version__ = "1.2.0"
+__version__ = "1.2.1"
 
 
 class IrisAuth(requests.auth.AuthBase):
@@ -40,12 +40,20 @@ class IrisAuth(requests.auth.AuthBase):
 class IrisClient(requests.Session):
     def __init__(self, app, key, api_host, version=0):
         super(IrisClient, self).__init__()
+        self.app = app
         self.auth = IrisAuth(app, key)
         self.url = api_host + '/v%d/' % version
 
     def incident(self, plan, context):
         r = self.post(self.url + 'incidents',
                       json={'plan': plan, 'context': context})
+        if r.status_code == 401:
+            err_desc = r.json()['description']
+            if err_desc.startswith('Application not found'):
+                apps = self.get(self.url + 'applications').json()
+                raise ValueError(
+                    '"%s" not in list of available applications: %s' % (
+                        self.app, ', '.join([app['name'] for app in apps])))
         r.raise_for_status()
         try:
             return r.json()
