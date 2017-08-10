@@ -44,9 +44,11 @@ class IrisClient(requests.Session):
         self.auth = IrisAuth(app, key)
         self.url = api_host + '/v%d/' % version
 
-    def incident(self, plan, context):
-        r = self.post(self.url + 'incidents',
-                      json={'plan': plan, 'context': context})
+    def incident(self, plan, context, dynamic_targets=None):
+        incident_json={'plan': plan, 'context': context}
+        if dynamic_targets:
+            incident_json['dynamic_targets'] = dynamic_targets
+        r = self.post(self.url + 'incidents', json=incident_json)
         if r.status_code == 401:
             err_desc = r.json()['description']
             if err_desc.startswith('Application not found'):
