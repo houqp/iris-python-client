@@ -12,7 +12,7 @@ import requests
 from .exceptions import InvalidArgument
 
 
-__version__ = "1.2.1"
+__version__ = "1.3.0"
 
 
 class IrisAuth(requests.auth.AuthBase):
@@ -26,12 +26,13 @@ class IrisAuth(requests.auth.AuthBase):
 
     def __call__(self, request):
         HMAC = self.HMAC.copy()
-        path = str(request.path_url)
-        method = str(request.method)
-        body = str(request.body or '')
-        window = str(int(time.time()) // 5)
-        content = '%s %s %s %s' % (window, method, path, body)
-        HMAC.update(content.encode('utf-8'))
+
+        path = request.path_url.encode('utf8')
+        method = request.method.encode('utf8')
+        body = request.body or b''
+        window = str(int(time.time()) // 5).encode('utf8')
+        HMAC.update(b'%s %s %s %s' % (window, method, path, body))
+
         digest = base64.urlsafe_b64encode(HMAC.digest())
         request.headers['Authorization'] = self.header + digest
         return request
