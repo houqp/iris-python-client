@@ -63,6 +63,22 @@ class IrisClient(requests.Session):
         except:
             raise ValueError('Failed to decode json: %s' % r.text)
 
+    def claim(self, number, owner):
+        incident_json={'owner': owner}        
+        r = self.post(self.url + 'incidents/%s' % number, json=incident_json)
+        if r.status_code == 401:
+            err_desc = r.json()['title']
+            if err_desc.startswith('Application not found'):
+                apps = self.get(self.url + 'applications').json()
+                raise ValueError(
+                    '"%s" not in list of available applications: %s' % (
+                        self.app, ', '.join([app['name'] for app in apps])))
+        r.raise_for_status()
+        try:
+            return r.json()
+        except:
+            raise ValueError('Failed to decode json: %s' % r.text)
+
     def notification(self, role, target, subject,
                      priority=None, mode=None, body=None, template=None,
                      context=None, email_html=None):
